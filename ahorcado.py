@@ -67,6 +67,7 @@ def mostrar_ahorcado(intentos):
         =========
         """
     ]
+
     print(estados[intentos])
 def jugar_ahorcado():
     palabra = input("Dame una plabra:")
