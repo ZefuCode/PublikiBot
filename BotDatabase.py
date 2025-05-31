@@ -1,10 +1,10 @@
 import sqlite3
 
-# Conexión y creación de base de datos
+# Conexión a la base de datos
 conn = sqlite3.connect("bot_respuestas.db")
 cursor = conn.cursor()
 
-# Tabla de respuestas
+# Crear tablas
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS respuestas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS respuestas (
 )
 ''')
 
-# Tabla de palabras clave
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS palabras_clave (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,7 +23,6 @@ CREATE TABLE IF NOT EXISTS palabras_clave (
 )
 ''')
 
-# Tabla de menús
 cursor.execute('''
 CREATE TABLE IF NOT EXISTS menus (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -32,6 +30,21 @@ CREATE TABLE IF NOT EXISTS menus (
 )
 ''')
 
+# Insertar datos de prueba (solo si no hay)
+cursor.execute("SELECT COUNT(*) FROM respuestas")
+if cursor.fetchone()[0] == 0:
+    # Insertar una respuesta (promoción)
+    cursor.execute("INSERT INTO respuestas (contenido) VALUES (?)",
+                   ("🎁 ¡Has ganado un combo de palomitas gratis!",))
+    respuesta_id = cursor.lastrowid
+
+    # Asociar una palabra clave (número de ticket)
+    cursor.execute("INSERT INTO palabras_clave (palabra, respuesta_id) VALUES (?, ?)",
+                   ("12345678", respuesta_id))
+
+    print("✅ Datos de prueba insertados.")
+else:
+    print("ℹ️ La base de datos ya contiene datos.")
+
 conn.commit()
-print("Base de datos creada exitosamente.")
 conn.close()
